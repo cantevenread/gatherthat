@@ -1,5 +1,8 @@
 mod config;
 mod fields;
+mod screen;
+mod manager;
+
 use crate::config::CapConfig;
 use crate::fields::FieldType;
 
