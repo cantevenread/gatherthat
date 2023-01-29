@@ -9,4 +9,4 @@ authors = ["CapThat"]
 [dependencies]
 serde = { version = "1.0.152", features = ["derive"] }
 toml = "0.6.0"
-enigo = "0.0.14"
+enigo = { git = "https://github.com/enigo-rs/enigo", rev = "7f96365cc29c6089c3c1a2194f9f84f881e8f675" }
