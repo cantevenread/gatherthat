@@ -2,6 +2,9 @@ use toml;
 use serde::{Serialize, Deserialize};
 use std::io::Error as IoError;
 use std::fs;
+use once_cell::sync::Lazy;
+use std::clone::Clone;
+use crate::fields::{FieldType, HiveSlots};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct CapConfigStructure {
@@ -85,3 +88,9 @@ impl CapConfig {
         }
     }
 }
+
+pub static CONFIG: Lazy<CapConfig> = Lazy::new(|| CapConfig::new());
+pub static CURRENT_FIELD: Lazy<FieldType> = Lazy::new(|| CONFIG.field.clone().parse().expect("INVALID>FIELD"));
+pub static CURRENT_HIVE_SLOT: Lazy<HiveSlots> = Lazy::new(|| CONFIG.hive_slot.clone().parse().expect("INVALID>HIVE_SLOT"));
+
+// USE &* to get value

@@ -1,3 +1,5 @@
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 use crate::config::CapConfig;
 use crate::fields::FieldType::{BlueFlower, Cactus, Clover, Coconut, Dandelion, MountainTop, Mushroom, Pepper, Pine, Pumpkin, Rose, Spider, Strawberry, Stump, Sunflower};
 use crate::fields::HiveSlots::{HiveSlot1, HiveSlot2, HiveSlot3, HiveSlot4, HiveSlot5, HiveSlot6};
@@ -7,7 +9,50 @@ mod sunflower;
 
 
 #[derive(Debug)]
-pub struct FieldGathererError {}
+pub struct FieldGathererError {
+    pub details: String,
+}
+
+impl Display for FieldGathererError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f,"{}",self.details)
+    }
+}
+
+impl FieldGathererError {
+    pub fn new(msg: &str) -> FieldGathererError {
+        FieldGathererError{details: msg.to_string()}
+    }
+}
+
+impl Error for FieldGathererError {
+    fn description(&self) -> &str {
+        &self.details
+    }
+}
+
+#[derive(Debug)]
+pub struct InvalidInfoGiven {
+    pub details: String,
+}
+
+impl Display for InvalidInfoGiven {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f,"{}",self.details)
+    }
+}
+
+impl InvalidInfoGiven {
+    pub fn new(msg: &str) -> InvalidInfoGiven {
+        InvalidInfoGiven{details: msg.to_string()}
+    }
+}
+
+impl Error for InvalidInfoGiven {
+    fn description(&self) -> &str {
+        &self.details
+    }
+}
 
 
 #[derive(Debug)]
@@ -80,10 +125,10 @@ impl std::str::FromStr for HiveSlots {
     }
 }
 
-pub fn start_field(field: FieldType, config: CapConfig) -> Result<(), FieldGathererError> {
+pub fn start_field(field: &FieldType, config: &CapConfig) -> Result<(), FieldGathererError> {
     match field {
         Dandelion => Ok(dandelion::start_dandelion_gather(config)),
-        _ => Err(FieldGathererError {})
+        _ => Err(FieldGathererError { details: "Field Doesn't Exist".to_string() })
     }
 }
 
