@@ -1,3 +1,5 @@
+use crate::config::CapConfig;
+
 mod dandelion;
 
 
@@ -35,9 +37,9 @@ impl std::str::FromStr for FieldType {
     }
 }
 
-pub fn start_field(field: FieldType) -> Result<(), FieldGathererError> {
+pub fn start_field(field: FieldType, config: CapConfig) -> Result<(), FieldGathererError> {
     match field {
-        FieldType::Dandelion => Ok(dandelion::start_dandelion_gather()),
+        FieldType::Dandelion => Ok(dandelion::start_dandelion_gather(config)),
         _ => Err(FieldGathererError {})
     }
 }

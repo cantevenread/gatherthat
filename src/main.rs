@@ -10,6 +10,6 @@ fn main() {
 
     println!("{:#?}", current_field);
 
-    fields::start_field(current_field).expect("TODO: panic message");
+    fields::start_field(current_field, config).expect("TODO: panic message");
 }
 

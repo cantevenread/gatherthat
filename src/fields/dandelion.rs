@@ -1,7 +1,8 @@
 use enigo::*;
 use std::{thread, time};
+use crate::config::CapConfig;
 
-pub fn start_dandelion_gather() {
+pub fn start_dandelion_gather(config: CapConfig) {
     let mut enigo = Enigo::new();
 
     enigo.mouse_move_to(785, 840);

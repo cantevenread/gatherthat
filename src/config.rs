@@ -16,7 +16,7 @@ struct CapConfigInfo {
 }
 
 #[derive(Debug)]
-pub(crate) struct CapConfig {
+pub struct CapConfig {
     pub bees: String,
     pub hive_slot: String,
     pub field: String
