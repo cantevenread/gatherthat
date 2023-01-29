@@ -1,6 +1,7 @@
 use crate::config::CapConfig;
 
 mod dandelion;
+mod sunflower;
 
 
 #[derive(Debug)]
