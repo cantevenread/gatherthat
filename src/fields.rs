@@ -72,6 +72,20 @@ pub enum HiveSlots {
 
 }
 
+impl fmt::Display for HiveSlots {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            HiveSlot1 => write!(f, "1"),
+            HiveSlot2 => write!(f, "2"),
+            HiveSlot3 => write!(f, "3"),
+            HiveSlot4 => write!(f, "4"),
+            HiveSlot5 => write!(f, "5"),
+            HiveSlot6 => write!(f, "6"),
+        }
+
+    }
+}
+
 
 #[derive(Debug)]
 #[derive(Default)]
@@ -190,6 +204,35 @@ pub fn change_field(value_change: String) -> Result<(), &'static str> {
             Err("Invalid field")
         },
     }
+}
+
+pub fn change_hiveslot(value_change: String) -> Result<(), &'static str> {
+    match value_change.parse::<HiveSlots>() {
+        Ok(_valid_value) => {
+            let file_contents = fs::read_to_string("Config.toml").unwrap();
+            let mut config: CapConfigStructure = toml::from_str(&file_contents).unwrap();
+            config.info.as_mut().expect("todo").hive_slot = Some(value_change);
+            let new_file_contents = toml::to_string(&config).unwrap();
+            let mut file = std::fs::File::create("Config.toml").unwrap();
+            file.write_all(new_file_contents.as_bytes()).unwrap();
+            println!("Written field");
+            Ok(())
+        },
+        Err(_) => {
+            println!("Invalid field");
+            Err("Invalid field")
+        },
+    }
+}
+
+pub fn change_bee_amount(value_change: String)  {
+            let file_contents = fs::read_to_string("Config.toml").unwrap();
+            let mut config: CapConfigStructure = toml::from_str(&file_contents).unwrap();
+            config.info.as_mut().expect("todo").bees = Some(value_change);
+            let new_file_contents = toml::to_string(&config).unwrap();
+            let mut file = std::fs::File::create("Config.toml").unwrap();
+            file.write_all(new_file_contents.as_bytes()).unwrap();
+            println!("Written field");
 }
 
 
