@@ -177,6 +177,7 @@ pub fn change_field(value_change: String) -> Result<(), &'static str> {
             let new_file_contents = toml::to_string(&config).unwrap();
             let mut file = std::fs::File::create("Config.toml").unwrap();
             file.write_all(new_file_contents.as_bytes()).unwrap();
+            println!("Written field");
             Ok(())
         },
         Err(_) => {

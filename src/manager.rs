@@ -1,6 +1,6 @@
 use eframe::egui;
-use crate::config::CURRENT_FIELD;
-use crate::fields::{change_field, FIELD_VEC, start_field};
+use crate::config::{CONFIG, CURRENT_FIELD};
+use crate::fields::{change_field, FIELD_VEC, FieldType, start_field};
 
 
 pub fn start_manager() {
@@ -54,6 +54,12 @@ impl eframe::App for MyApp {
                     ui.label(format!("Allowed Fields: \n{:?}", &*FIELD_VEC));
                 }
             });
+
+            ui.add_space(220.0);
+            if ui.button("START").clicked() {
+                let s: FieldType = self.current_field.clone().parse().expect("Parse Err");
+                start_field(&s, &*CONFIG).expect("TODO: panic message");
+            }
 
 
 
