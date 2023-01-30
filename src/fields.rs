@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fmt;
+use std::{fmt, fs};
 use std::fmt::{Display, Formatter};
 use std::fs::File;
 use std::io::Write;
@@ -92,6 +92,12 @@ pub enum FieldType {
     Coconut
 }
 
+impl Default for FieldType {
+    fn default() -> Self {
+        FieldType::Dandelion
+    }
+}
+
 impl fmt::Display for FieldType {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
@@ -162,24 +168,24 @@ pub fn start_field(field: &FieldType, config: &CapConfig) -> Result<(), FieldGat
     }
 }
 
-pub fn change_field(value_change: String) {
-    let file_contents = std::fs::read_to_string("Config.toml").unwrap();
-
-    // Extract the current field value
-    let current_field_value = get_field_value(&file_contents);
-    // Replace the current field value with the new value
-    let new_file_contents = file_contents.replace(&current_field_value, &value_change);
-    // Write the new contents to the file
-    let mut file = File::create("Config.toml").unwrap();
-    file.write_all(new_file_contents.as_bytes()).unwrap();
+pub fn change_field(value_change: String) -> Result<(), &'static str> {
+    match value_change.parse::<FieldType>() {
+        Ok(valid_value) => {
+            let file_contents = fs::read_to_string("Config.toml").unwrap();
+            let mut config: CapConfigStructure = toml::from_str(&file_contents).unwrap();
+            config.info.as_mut().expect("todo").field = Some(value_change);
+            let new_file_contents = toml::to_string(&config).unwrap();
+            let mut file = std::fs::File::create("Config.toml").unwrap();
+            file.write_all(new_file_contents.as_bytes()).unwrap();
+            Ok(())
+        },
+        Err(_) => {
+            println!("Invalid field");
+            Err("Invalid field")
+        },
+    }
 }
 
-pub fn get_field_value(file_contents: &str) -> String {
-    // Extract the current field value using regex
-    let re = regex::Regex::new(r"field = \"(.*)\"").unwrap();
-    let captures = re.find(file_contents).unwrap();
-    captures.as_str().to_string()
-}
 
 pub static FIELD_VEC: Lazy<Vec<FieldType>> = Lazy::new(||
                                                      vec![Dandelion, Sunflower, Pepper, Strawberry, Stump, Mushroom,

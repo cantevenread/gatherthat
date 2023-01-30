@@ -1,11 +1,15 @@
+use std::thread::sleep;
+use std::time;
 use eframe::egui;
 use crate::config::CURRENT_FIELD;
 use crate::fields::{change_field, FIELD_VEC, FieldType, start_field};
+use crate::fields::FieldType::{Coconut, Dandelion};
 
 pub fn start_manager() {
+    tracing_subscriber::fmt::init();
 
     let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(500.0, 240.0)),
+        initial_window_size: Some(egui::vec2(600.0, 300.0)),
         ..Default::default()
     };
     eframe::run_native(
@@ -34,7 +38,16 @@ impl eframe::App for MyApp {
                 ui.label(format!("Current Field: "));
                 ui.text_edit_singleline(&mut self.current_field);
                 if ui.button("CHANGE_FIELD").clicked() {
-                    change_field(self.current_field.clone());
+                    let result = change_field(self.current_field.clone());
+
+                    match result {
+                        Ok(value) => {
+                            ui.label("Written");
+                        }
+                        Err(err) => {
+                            ui.label("INVALID");
+                        }
+                    }
                 }
             });
 
