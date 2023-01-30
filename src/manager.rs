@@ -42,7 +42,7 @@ impl eframe::App for MyApp {
 
                     match result {
                         Ok(value) => {
-                            ui.label("Written");
+                            ui.label("WRITTEN");
                         }
                         Err(err) => {
                             ui.label("INVALID");
@@ -57,9 +57,9 @@ impl eframe::App for MyApp {
                 }
             });
 
-            ui.label(" ");
-
+            ui.add_space(3.0);
             ui.label("H")
+
 
 
         });
