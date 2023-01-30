@@ -7,21 +7,24 @@ use std::clone::Clone;
 use crate::fields::{FieldType, HiveSlots};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct CapConfigStructure {
-    info: Option<CapConfigInfo>
+pub struct CapConfigStructure {
+    pub info: Option<CapConfigInfo>
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct CapConfigInfo {
-    bees: Option<String>,
-    hive_slot: Option<String>,
-    field: Option<String>
+pub struct CapConfigInfo {
+    pub bees: Option<String>,
+    pub hive_slot: Option<String>,
+    pub field: Option<String>
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize,Debug)]
 pub struct CapConfig {
+    #[serde(default = "deafult_bees")]
     pub bees: String,
+    #[serde(default = "deafult_hive_slot")]
     pub hive_slot: String,
+
     pub field: String
 }
 
@@ -87,6 +90,13 @@ impl CapConfig {
             hive_slot
         }
     }
+}
+
+fn deafult_bees() -> String {
+    "35".to_string()
+}
+fn deafult_hive_slot() -> String {
+    "1".to_string()
 }
 
 pub static CONFIG: Lazy<CapConfig> = Lazy::new(|| CapConfig::new());

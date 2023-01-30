@@ -1,5 +1,6 @@
 use crate::config::{CONFIG, CURRENT_FIELD};
 use crate::fields::start_field;
+use crate::manager::start_manager;
 
 mod config;
 mod fields;
@@ -17,7 +18,7 @@ fn main() {
 
     println!("{:#?}", &*config::CURRENT_HIVE_SLOT);
 
-    start_field(&*CURRENT_FIELD, &*CONFIG).expect("Start Field Error");
+    start_manager();
 
 }
 
