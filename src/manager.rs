@@ -58,7 +58,7 @@ impl eframe::App for MyApp {
             ui.add_space(220.0);
             if ui.button("START").clicked() {
                 let s: FieldType = self.current_field.clone().parse().expect("Parse Err");
-                start_field(&s, &*CONFIG).expect("TODO: panic message");
+                start_field(&s, &*CONFIG).expect("START_FIELD FUNCTION CALL ERROR");
             }
 
 

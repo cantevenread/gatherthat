@@ -164,6 +164,7 @@ impl std::str::FromStr for HiveSlots {
 pub fn start_field(field: &FieldType, config: &CapConfig) -> Result<(), FieldGathererError> {
     match field {
         Dandelion => Ok(dandelion::start_dandelion_gather(config)),
+        Sunflower => Ok(sunflower::start_sunflower_gather(config)),
         _ => Err(FieldGathererError { details: "Field Doesn't Exist".to_string() })
     }
 }
