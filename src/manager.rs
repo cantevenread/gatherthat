@@ -1,14 +1,11 @@
-use std::fs::File;
-use std::ops::Deref;
 use eframe::egui;
-use toml::Value;
 use crate::config::CURRENT_FIELD;
 use crate::fields::{change_field, FIELD_VEC, FieldType, start_field};
 
 pub fn start_manager() {
 
     let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(480.0, 240.0)),
+        initial_window_size: Some(egui::vec2(500.0, 240.0)),
         ..Default::default()
     };
     eframe::run_native(

@@ -6,7 +6,7 @@ use std::io::Write;
 use once_cell::sync::Lazy;
 use serde::de::Unexpected::Str;
 use toml::{to_string, Value};
-use crate::config::{CapConfig, CapConfigInfo};
+use crate::config::{CapConfig, CapConfigInfo, CapConfigStructure};
 use crate::fields::FieldType::{BlueFlower, Cactus, Clover, Coconut, Dandelion, MountainTop, Mushroom, Pepper, Pine, Pumpkin, Rose, Spider, Strawberry, Stump, Sunflower};
 use crate::fields::HiveSlots::{HiveSlot1, HiveSlot2, HiveSlot3, HiveSlot4, HiveSlot5, HiveSlot6};
 
@@ -164,9 +164,9 @@ pub fn start_field(field: &FieldType, config: &CapConfig) -> Result<(), FieldGat
 
 pub fn change_field(value_change: String) {
     let file_contents = std::fs::read_to_string("Config.toml").unwrap();
-    let mut value: CapConfig = toml::from_str(&file_contents).unwrap();
+    let mut value: CapConfigInfo = toml::from_str(&file_contents).unwrap();
 
-    value.field = value_change;
+    value.field = Option::from(value_change);
     // Serialize the modified value
     let new_file_contents = to_string(&value).unwrap();
 
