@@ -1,9 +1,9 @@
 use enigo::*;
-use std::{thread, time};
+
 use crate::config::CapConfig;
 
-pub fn start_sunflower_gather(config: &CapConfig) {
-    let mut enigo = Enigo::new();
+pub fn start_sunflower_gather(_config: &CapConfig) {
+    let _enigo = Enigo::new();
 
     // enigo.mouse_move_to(950, 840);
     // thread::sleep(time::Duration::from_millis(1000));

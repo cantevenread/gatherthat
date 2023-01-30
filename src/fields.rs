@@ -1,12 +1,12 @@
 use std::error::Error;
 use std::{fmt, fs};
 use std::fmt::{Display, Formatter};
-use std::fs::File;
+
 use std::io::Write;
 use once_cell::sync::Lazy;
-use regex::*;
-use toml::{to_string, Value};
-use crate::config::{CapConfig, CapConfigInfo, CapConfigStructure};
+
+
+use crate::config::{CapConfig, CapConfigStructure};
 use crate::fields::FieldType::{BlueFlower, Cactus, Clover, Coconut, Dandelion, MountainTop, Mushroom, Pepper, Pine, Pumpkin, Rose, Spider, Strawberry, Stump, Sunflower};
 use crate::fields::HiveSlots::{HiveSlot1, HiveSlot2, HiveSlot3, HiveSlot4, HiveSlot5, HiveSlot6};
 
@@ -74,8 +74,10 @@ pub enum HiveSlots {
 
 
 #[derive(Debug)]
+#[derive(Default)]
 pub enum FieldType {
     Sunflower,
+    #[default]
     Dandelion,
     Spider,
     Pepper,
@@ -92,11 +94,7 @@ pub enum FieldType {
     Coconut
 }
 
-impl Default for FieldType {
-    fn default() -> Self {
-        FieldType::Dandelion
-    }
-}
+
 
 impl fmt::Display for FieldType {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -163,15 +161,21 @@ impl std::str::FromStr for HiveSlots {
 
 pub fn start_field(field: &FieldType, config: &CapConfig) -> Result<(), FieldGathererError> {
     match field {
-        Dandelion => Ok(dandelion::start_dandelion_gather(config)),
-        Sunflower => Ok(sunflower::start_sunflower_gather(config)),
+        Dandelion => {
+            dandelion::start_dandelion_gather(config);
+            Ok(())
+        },
+        Sunflower => {
+            sunflower::start_sunflower_gather(config);
+            Ok(())
+        },
         _ => Err(FieldGathererError { details: "Field Doesn't Exist".to_string() })
     }
 }
 
 pub fn change_field(value_change: String) -> Result<(), &'static str> {
     match value_change.parse::<FieldType>() {
-        Ok(valid_value) => {
+        Ok(_valid_value) => {
             let file_contents = fs::read_to_string("Config.toml").unwrap();
             let mut config: CapConfigStructure = toml::from_str(&file_contents).unwrap();
             config.info.as_mut().expect("todo").field = Some(value_change);

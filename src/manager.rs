@@ -13,7 +13,7 @@ pub fn start_manager() {
     eframe::run_native(
         "GatherThat Manager #232901",
         options,
-        Box::new(|_cc| Box::new(MyApp::default())),
+        Box::new(|_cc| Box::<MyApp>::default()),
     )
 }
 
@@ -24,7 +24,7 @@ struct MyApp {
 impl Default for MyApp {
     fn default() -> Self {
         Self {
-            current_field: (&*CURRENT_FIELD.to_string()).parse().unwrap(),
+            current_field: (*CURRENT_FIELD.to_string()).parse().unwrap(),
         }
     }
 }
@@ -33,16 +33,16 @@ impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.label(format!("Current Field: "));
+                ui.label("Current Field: ".to_string());
                 ui.text_edit_singleline(&mut self.current_field);
                 if ui.button("CHANGE_FIELD").clicked() {
                     let result = change_field(self.current_field.clone());
 
                     match result {
-                        Ok(value) => {
+                        Ok(_value) => {
                             ui.label("WRITTEN");
                         }
-                        Err(err) => {
+                        Err(_err) => {
                             ui.label("INVALID");
                         }
                     }
@@ -58,7 +58,7 @@ impl eframe::App for MyApp {
             ui.add_space(220.0);
             if ui.button("START").clicked() {
                 let s: FieldType = self.current_field.clone().parse().expect("Parse Err");
-                start_field(&s, &*CONFIG).expect("START_FIELD FUNCTION CALL ERROR");
+                start_field(&s, &CONFIG).expect("START_FIELD FUNCTION CALL ERROR");
             }
 
 

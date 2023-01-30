@@ -1,4 +1,4 @@
-use toml;
+
 use serde::{Serialize, Deserialize};
 use std::io::Error as IoError;
 use std::fs;
@@ -84,7 +84,7 @@ impl CapConfig {
         };
 
 
-        return CapConfig {
+        CapConfig {
             bees,
             field,
             hive_slot
@@ -99,7 +99,7 @@ fn deafult_hive_slot() -> String {
     "1".to_string()
 }
 
-pub static CONFIG: Lazy<CapConfig> = Lazy::new(|| CapConfig::new());
+pub static CONFIG: Lazy<CapConfig> = Lazy::new(CapConfig::new);
 pub static CURRENT_FIELD: Lazy<FieldType> = Lazy::new(|| CONFIG.field.clone().parse().expect("INVALID>FIELD"));
 pub static CURRENT_HIVE_SLOT: Lazy<HiveSlots> = Lazy::new(|| CONFIG.hive_slot.clone().parse().expect("INVALID>HIVE_SLOT"));
 
