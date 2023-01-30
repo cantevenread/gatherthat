@@ -1,9 +1,7 @@
-use std::thread::sleep;
-use std::time;
 use eframe::egui;
 use crate::config::CURRENT_FIELD;
-use crate::fields::{change_field, FIELD_VEC, FieldType, start_field};
-use crate::fields::FieldType::{Coconut, Dandelion};
+use crate::fields::{change_field, FIELD_VEC, start_field};
+
 
 pub fn start_manager() {
     tracing_subscriber::fmt::init();
@@ -56,9 +54,6 @@ impl eframe::App for MyApp {
                     ui.label(format!("Allowed Fields: \n{:?}", &*FIELD_VEC));
                 }
             });
-
-            ui.add_space(3.0);
-            ui.label("H")
 
 
 
