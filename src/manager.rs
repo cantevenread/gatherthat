@@ -1,13 +1,19 @@
-use eframe::egui;
 use crate::config::{CONFIG, CURRENT_FIELD, CURRENT_HIVE_SLOT};
-use crate::fields::{change_bee_amount, change_field, change_hiveslot, FIELD_VEC, FieldType, start_field};
-
+use crate::fields::{
+    change_bee_amount, change_field, change_hiveslot, start_field, FieldType, FIELD_VEC,
+};
+use crate::screen::SYS;
+use eframe::egui;
+use sysinfo::SystemExt;
 
 pub fn start_manager() {
+    unsafe {
+        SYS.refresh_all();
+    }
     tracing_subscriber::fmt::init();
 
     let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(600.0, 400.0)),
+        initial_window_size: Some(egui::vec2(670.0, 400.0)),
         ..Default::default()
     };
     eframe::run_native(
@@ -21,6 +27,7 @@ struct MyApp {
     current_field: String,
     hive_slot: String,
     bees: String,
+    used_memory: String,
 }
 
 impl Default for MyApp {
@@ -28,7 +35,8 @@ impl Default for MyApp {
         Self {
             current_field: (*CURRENT_FIELD.to_string()).parse().unwrap(),
             hive_slot: (*CURRENT_HIVE_SLOT.to_string()).parse().unwrap(),
-            bees: (&*CONFIG.bees).parse().unwrap()
+            bees: (&*CONFIG.bees).parse().unwrap(),
+            used_memory: unsafe { SYS.used_memory().to_string() },
         }
     }
 }
@@ -67,7 +75,6 @@ impl eframe::App for MyApp {
                         }
                     }
                 }
-
             });
 
             ui.horizontal(|ui| {
@@ -77,7 +84,6 @@ impl eframe::App for MyApp {
                     change_bee_amount(self.bees.clone());
                     ui.label("WRITTEN");
                 }
-
             });
 
             ui.horizontal(|ui| {
@@ -91,14 +97,14 @@ impl eframe::App for MyApp {
                 }
             });
 
-
             ui.horizontal_top(|ui| {
                 if ui.button("START").clicked() {
                     let s: FieldType = self.current_field.clone().parse().expect("Parse Err");
                     start_field(&s, &CONFIG).expect("START_FIELD FUNCTION CALL ERROR");
                 }
-            });
 
+                ui.label(format!("{}: Bytes of RAM used", self.used_memory.clone()));
+            });
         });
     }
 }

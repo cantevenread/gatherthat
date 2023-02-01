@@ -1,18 +1,20 @@
 use std::error::Error;
-use std::{fmt, fs};
 use std::fmt::{Display, Formatter};
+use std::{fmt, fs};
 
-use std::io::Write;
 use once_cell::sync::Lazy;
-
+use std::io::Write;
 
 use crate::config::{CapConfig, CapConfigStructure};
-use crate::fields::FieldType::{BlueFlower, Cactus, Clover, Coconut, Dandelion, MountainTop, Mushroom, Pepper, Pine, Pumpkin, Rose, Spider, Strawberry, Stump, Sunflower};
+use crate::fields::FieldType::{
+    BlueFlower, Cactus, Clover, Coconut, Dandelion, MountainTop, Mushroom, Pepper, Pine, Pumpkin,
+    Rose, Spider, Strawberry, Stump, Sunflower,
+};
 use crate::fields::HiveSlots::{HiveSlot1, HiveSlot2, HiveSlot3, HiveSlot4, HiveSlot5, HiveSlot6};
 
 mod dandelion;
+mod spider;
 mod sunflower;
-
 
 #[derive(Debug)]
 pub struct FieldGathererError {
@@ -21,13 +23,15 @@ pub struct FieldGathererError {
 
 impl Display for FieldGathererError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f,"{}",self.details)
+        write!(f, "{}", self.details)
     }
 }
 
 impl FieldGathererError {
     pub fn new(msg: &str) -> FieldGathererError {
-        FieldGathererError{details: msg.to_string()}
+        FieldGathererError {
+            details: msg.to_string(),
+        }
     }
 }
 
@@ -44,13 +48,15 @@ pub struct InvalidInfoGiven {
 
 impl Display for InvalidInfoGiven {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f,"{}",self.details)
+        write!(f, "{}", self.details)
     }
 }
 
 impl InvalidInfoGiven {
     pub fn new(msg: &str) -> InvalidInfoGiven {
-        InvalidInfoGiven{details: msg.to_string()}
+        InvalidInfoGiven {
+            details: msg.to_string(),
+        }
     }
 }
 
@@ -60,7 +66,6 @@ impl Error for InvalidInfoGiven {
     }
 }
 
-
 #[derive(Debug)]
 pub enum HiveSlots {
     HiveSlot1,
@@ -69,7 +74,6 @@ pub enum HiveSlots {
     HiveSlot4,
     HiveSlot5,
     HiveSlot6,
-
 }
 
 impl fmt::Display for HiveSlots {
@@ -82,13 +86,10 @@ impl fmt::Display for HiveSlots {
             HiveSlot5 => write!(f, "5"),
             HiveSlot6 => write!(f, "6"),
         }
-
     }
 }
 
-
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub enum FieldType {
     Sunflower,
     #[default]
@@ -105,10 +106,8 @@ pub enum FieldType {
     Pumpkin,
     Pine,
     MountainTop,
-    Coconut
+    Coconut,
 }
-
-
 
 impl fmt::Display for FieldType {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -120,17 +119,15 @@ impl fmt::Display for FieldType {
             Strawberry => write!(f, "Strawberry"),
             Stump => write!(f, "Stump"),
             Mushroom => write!(f, "Mushroom"),
-            Clover => write!(f, "Clover") ,
+            Clover => write!(f, "Clover"),
             Rose => write!(f, "Rose"),
             BlueFlower => write!(f, "BlueFlower"),
             Cactus => write!(f, "Cactus"),
             Pumpkin => write!(f, "Pumpkin"),
             Pine => write!(f, "Pine"),
             MountainTop => write!(f, "MountainTop"),
-            Coconut => write!(f, "Coconut")
-
+            Coconut => write!(f, "Coconut"),
         }
-
     }
 }
 
@@ -168,7 +165,7 @@ impl std::str::FromStr for HiveSlots {
             "4" => Ok(HiveSlot4),
             "5" => Ok(HiveSlot5),
             "6" => Ok(HiveSlot6),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
@@ -178,12 +175,18 @@ pub fn start_field(field: &FieldType, config: &CapConfig) -> Result<(), FieldGat
         Dandelion => {
             dandelion::start_dandelion_gather(config);
             Ok(())
-        },
+        }
         Sunflower => {
             sunflower::start_sunflower_gather(config);
             Ok(())
-        },
-        _ => Err(FieldGathererError { details: "Field Doesn't Exist".to_string() })
+        }
+        Spider => {
+            spider::start_spider_gather(config);
+            Ok(())
+        }
+        _ => Err(FieldGathererError {
+            details: "Field Doesn't Exist".to_string(),
+        }),
     }
 }
 
@@ -198,11 +201,11 @@ pub fn change_field(value_change: String) -> Result<(), &'static str> {
             file.write_all(new_file_contents.as_bytes()).unwrap();
             println!("Written field");
             Ok(())
-        },
+        }
         Err(_) => {
             println!("Invalid field");
             Err("Invalid field")
-        },
+        }
     }
 }
 
@@ -217,28 +220,42 @@ pub fn change_hiveslot(value_change: String) -> Result<(), &'static str> {
             file.write_all(new_file_contents.as_bytes()).unwrap();
             println!("Written field");
             Ok(())
-        },
+        }
         Err(_) => {
             println!("Invalid field");
             Err("Invalid field")
-        },
+        }
     }
 }
 
-pub fn change_bee_amount(value_change: String)  {
-            let file_contents = fs::read_to_string("Config.toml").unwrap();
-            let mut config: CapConfigStructure = toml::from_str(&file_contents).unwrap();
-            config.info.as_mut().expect("todo").bees = Some(value_change);
-            let new_file_contents = toml::to_string(&config).unwrap();
-            let mut file = std::fs::File::create("Config.toml").unwrap();
-            file.write_all(new_file_contents.as_bytes()).unwrap();
-            println!("Written field");
+pub fn change_bee_amount(value_change: String) {
+    let file_contents = fs::read_to_string("Config.toml").unwrap();
+    let mut config: CapConfigStructure = toml::from_str(&file_contents).unwrap();
+    config.info.as_mut().expect("todo").bees = Some(value_change);
+    let new_file_contents = toml::to_string(&config).unwrap();
+    let mut file = std::fs::File::create("Config.toml").unwrap();
+    file.write_all(new_file_contents.as_bytes()).unwrap();
+    println!("Written field");
 }
 
-
-pub static FIELD_VEC: Lazy<Vec<FieldType>> = Lazy::new(||
-                                                     vec![Dandelion, Sunflower, Pepper, Strawberry, Stump, Mushroom,
-                                                          Clover, Rose, BlueFlower, Cactus, Pumpkin, Pine, MountainTop, Coconut]);
+pub static FIELD_VEC: Lazy<Vec<FieldType>> = Lazy::new(|| {
+    vec![
+        Dandelion,
+        Sunflower,
+        Pepper,
+        Strawberry,
+        Stump,
+        Mushroom,
+        Clover,
+        Rose,
+        BlueFlower,
+        Cactus,
+        Pumpkin,
+        Pine,
+        MountainTop,
+        Coconut,
+    ]
+});
 
 // "Dandelion" => Ok(Dandelion),
 // "Sunflower" => Ok(Sunflower),
